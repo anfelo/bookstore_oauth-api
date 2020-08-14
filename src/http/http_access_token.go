@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/anfelo/bookstore_oauth-api/src/services"
 	"github.com/anfelo/bookstore_oauth-api/src/utils/errors"
 
 	"github.com/anfelo/bookstore_oauth-api/src/domain/accesstoken"
@@ -17,11 +18,11 @@ type AccessTokenHandler interface {
 }
 
 type accessTokenHandler struct {
-	service accesstoken.Service
+	service services.Service
 }
 
 // NewHandler returns a new access token http handler
-func NewHandler(service accesstoken.Service) AccessTokenHandler {
+func NewHandler(service services.Service) AccessTokenHandler {
 	return &accessTokenHandler{
 		service,
 	}
@@ -39,14 +40,15 @@ func (h *accessTokenHandler) GetByID(c *gin.Context) {
 }
 
 func (h *accessTokenHandler) Create(c *gin.Context) {
-	var at accesstoken.AccessToken
-	if err := c.ShouldBindJSON(&at); err != nil {
+	var atReq accesstoken.AccessTokenResquest
+	if err := c.ShouldBindJSON(&atReq); err != nil {
 		restErr := errors.NewBadRequestError("invalid json body")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
 
-	if err := h.service.Create(at); err != nil {
+	at, err := h.service.Create(atReq)
+	if err != nil {
 		c.JSON(err.Status, err)
 		return
 	}

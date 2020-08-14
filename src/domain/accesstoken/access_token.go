@@ -8,8 +8,38 @@ import (
 )
 
 const (
-	expirationTime = 24
+	expirationTime             = 24
+	grantTypePassword          = "password"
+	grantTypeClientCredentials = "client_credentials"
 )
+
+// AccessTokenResquest main struct
+type AccessTokenResquest struct {
+	GrantType string `json:"grant_type"`
+	Scope     string `json:"scope"`
+
+	// Used for password grant type
+	Username string `json:"username"`
+	Password string `json:"password"`
+
+	// Used for client_credentials grant type
+	ClientID     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+}
+
+// Validate method to validate an access token
+func (r *AccessTokenResquest) Validate() *errors.RestErr {
+	switch r.GrantType {
+	case grantTypePassword:
+		break
+	case grantTypeClientCredentials:
+		break
+	default:
+		return errors.NewBadRequestError("invalid grant_type")
+	}
+
+	return nil
+}
 
 // AccessToken main struct
 type AccessToken struct {
@@ -20,8 +50,9 @@ type AccessToken struct {
 }
 
 // GetNewAccessToken package function incharge of creating a new Access Token
-func GetNewAccessToken() AccessToken {
+func GetNewAccessToken(userID int64) AccessToken {
 	return AccessToken{
+		UserID:  userID,
 		Expires: time.Now().UTC().Add(expirationTime * time.Hour).Unix(),
 	}
 }
@@ -49,4 +80,9 @@ func (at *AccessToken) Validate() *errors.RestErr {
 		return errors.NewBadRequestError("invalid expiration time")
 	}
 	return nil
+}
+
+// Generate method incharge of generating a valid token
+func (at *AccessToken) Generate() {
+	at.AccessToken = "some token"
 }

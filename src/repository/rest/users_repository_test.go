@@ -1,0 +1,112 @@
+package rest
+
+import (
+	"net/http"
+	"os"
+	"testing"
+
+	"github.com/mercadolibre/golang-restclient/rest"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestMain(m *testing.M) {
+	rest.StartMockupServer()
+	os.Exit(m.Run())
+}
+
+func TestLoginUserTimeoutFromApi(t *testing.T) {
+	rest.FlushMockups()
+	rest.AddMockups(&rest.Mock{
+		URL:          "https://api.bookstore.com/users/login",
+		HTTPMethod:   http.MethodPost,
+		ReqBody:      `{"email":"email@test.com","password":"password"}`,
+		RespHTTPCode: -1,
+		RespBody:     `{}`,
+	})
+	repository := usersRepository{}
+
+	user, err := repository.Login("email@test.com", "password")
+
+	assert.Nil(t, user)
+	assert.NotNil(t, err)
+	assert.EqualValues(t, http.StatusInternalServerError, err.Status)
+	assert.EqualValues(t, "invalid restclient response when trying to login user", err.Message)
+}
+
+func TestLoginUserInvalidErrorInterface(t *testing.T) {
+	rest.FlushMockups()
+	rest.AddMockups(&rest.Mock{
+		URL:          "https://api.bookstore.com/users/login",
+		HTTPMethod:   http.MethodPost,
+		ReqBody:      `{"email":"email@test.com","password":"password"}`,
+		RespHTTPCode: http.StatusNotFound,
+		RespBody:     `{"message":"invalid login credentials","status":"404", "error":"not_found"}`,
+	})
+	repository := usersRepository{}
+
+	user, err := repository.Login("email@test.com", "password")
+
+	assert.Nil(t, user)
+	assert.NotNil(t, err)
+	assert.EqualValues(t, http.StatusInternalServerError, err.Status)
+	assert.EqualValues(t, "invalid error interface when trying to login user", err.Message)
+}
+
+func TestLoginUserInvalidLoginCredentials(t *testing.T) {
+	rest.FlushMockups()
+	rest.AddMockups(&rest.Mock{
+		URL:          "https://api.bookstore.com/users/login",
+		HTTPMethod:   http.MethodPost,
+		ReqBody:      `{"email":"email@test.com","password":"password"}`,
+		RespHTTPCode: http.StatusNotFound,
+		RespBody:     `{"message":"invalid login credentials","status":404, "error":"not_found"}`,
+	})
+	repository := usersRepository{}
+
+	user, err := repository.Login("email@test.com", "password")
+
+	assert.Nil(t, user)
+	assert.NotNil(t, err)
+	assert.EqualValues(t, http.StatusNotFound, err.Status)
+	assert.EqualValues(t, "invalid login credentials", err.Message)
+}
+
+func TestLoginUserInvalidUserInterface(t *testing.T) {
+	rest.FlushMockups()
+	rest.AddMockups(&rest.Mock{
+		URL:          "https://api.bookstore.com/users/login",
+		HTTPMethod:   http.MethodPost,
+		ReqBody:      `{"email":"email@test.com","password":"password"}`,
+		RespHTTPCode: http.StatusOK,
+		RespBody:     `{}`,
+	})
+	repository := usersRepository{}
+
+	user, err := repository.Login("email@test.com", "password")
+
+	assert.Nil(t, user)
+	assert.NotNil(t, err)
+	assert.EqualValues(t, http.StatusInternalServerError, err.Status)
+	assert.EqualValues(t, "error when trying to unmarshal user response", err.Message)
+}
+
+func TestLoginUserNoError(t *testing.T) {
+	rest.FlushMockups()
+	rest.AddMockups(&rest.Mock{
+		URL:          "https://api.bookstore.com/users/login",
+		HTTPMethod:   http.MethodPost,
+		ReqBody:      `{"email":"email@test.com","password":"password"}`,
+		RespHTTPCode: http.StatusOK,
+		RespBody:     `{"id":1,"email":"email@test.com","first_name":"test","last_name":"test"}`,
+	})
+	repository := usersRepository{}
+
+	user, err := repository.Login("email@test.com", "password")
+
+	assert.NotNil(t, user)
+	assert.Nil(t, err)
+	assert.EqualValues(t, 1, user.ID)
+	assert.EqualValues(t, "test", user.FirstName)
+	assert.EqualValues(t, "test", user.LastName)
+	assert.EqualValues(t, "email@test.com", user.Email)
+}
