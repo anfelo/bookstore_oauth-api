@@ -5,7 +5,7 @@ import (
 
 	"github.com/anfelo/bookstore_oauth-api/src/domain/accesstoken"
 	"github.com/anfelo/bookstore_oauth-api/src/domain/users"
-	"github.com/anfelo/bookstore_oauth-api/src/utils/errors"
+	"github.com/anfelo/bookstore_utils/errors"
 )
 
 // Repository access token repository interface

@@ -1,4 +1,6 @@
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/anfelo/bookstore_utils v1.0.0 h1:DQaa30NGbWCfHAMcbP4L9qL8ZWMzmhaAkEzN6+iJ1mE=
+github.com/anfelo/bookstore_utils v1.0.0/go.mod h1:WCIFLrL5ynPA9kXaf9uImb2LPCsn3b/eUEoIDp9kAR8=
 github.com/aws/aws-sdk-go v1.29.15 h1:0ms/213murpsujhsnxnNKNeVouW60aJqSd992Ks3mxs=
 github.com/aws/aws-sdk-go v1.29.15/go.mod h1:1KvfttTE3SPKMpo8g2c6jL3ZKfXtFvKscTgahTma5Xg=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=

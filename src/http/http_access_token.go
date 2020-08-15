@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/anfelo/bookstore_oauth-api/src/services"
-	"github.com/anfelo/bookstore_oauth-api/src/utils/errors"
+	"github.com/anfelo/bookstore_utils/errors"
 
 	"github.com/anfelo/bookstore_oauth-api/src/domain/accesstoken"
 	"github.com/gin-gonic/gin"

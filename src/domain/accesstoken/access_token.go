@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/anfelo/bookstore_oauth-api/src/utils/errors"
+	"github.com/anfelo/bookstore_utils/errors"
 )
 
 const (

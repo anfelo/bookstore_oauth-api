@@ -5,7 +5,7 @@ import (
 
 	"github.com/anfelo/bookstore_oauth-api/src/clients/mongodb"
 	"github.com/anfelo/bookstore_oauth-api/src/domain/accesstoken"
-	"github.com/anfelo/bookstore_oauth-api/src/utils/errors"
+	"github.com/anfelo/bookstore_utils/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
